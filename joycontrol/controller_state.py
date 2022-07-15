@@ -326,7 +326,7 @@ class StickState:
         return self._calibration.h_center - radius <= self._h_stick <= self._calibration.h_center + radius and \
                self._calibration.v_center - radius <= self._v_stick <= self._calibration.v_center + radius
 
-    def set_up(self):
+    async def set_up(self, sec=0.1):
         """
         Sets stick to up position using the calibration data.
         """
@@ -334,8 +334,9 @@ class StickState:
             raise ValueError('No calibration data available.')
         self._h_stick = self._calibration.h_center
         self._v_stick = self._calibration.v_center + self._calibration.v_max_above_center
-
-    def set_down(self):
+        await asyncio.sleep(sec)
+        self.set_center()
+    async def set_down(self, sec=0.1):
         """
         Sets stick to down position using the calibration data.
         """
@@ -343,8 +344,10 @@ class StickState:
             raise ValueError('No calibration data available.')
         self._h_stick = self._calibration.h_center
         self._v_stick = self._calibration.v_center - self._calibration.v_max_below_center
+        await asyncio.sleep(sec)
+        self.set_center()
 
-    def set_left(self):
+    async def set_left(self, sec=0.1):
         """
         Sets stick to left position using the calibration data.
         """
@@ -352,8 +355,10 @@ class StickState:
             raise ValueError('No calibration data available.')
         self._h_stick = self._calibration.h_center - self._calibration.h_max_below_center
         self._v_stick = self._calibration.v_center
+        await asyncio.sleep(sec)
+        self.set_center()
 
-    def set_right(self):
+    async def set_right(self, sec=0.1):
         """
         Sets stick to right position using the calibration data.
         """
@@ -361,7 +366,9 @@ class StickState:
             raise ValueError('No calibration data available.')
         self._h_stick = self._calibration.h_center + self._calibration.h_max_above_center
         self._v_stick = self._calibration.v_center
-
+        await asyncio.sleep(sec)
+        self.set_center()
+        
     def set_calibration(self, calibration):
         self._calibration = calibration
 

@@ -137,6 +137,119 @@ async def test_controller_buttons(controller_state: ControllerState):
     # go back to home
     await button_push(controller_state, 'home')
 
+async def macro(controller_state: ControllerState):
+
+    if controller_state.get_controller() != Controller.PRO_CONTROLLER:
+        raise ValueError('This script only works with the Pro Controller!')
+
+    # waits until controller is fully connected
+    await controller_state.connect()
+
+    l_stick = controller_state.l_stick_state
+    r_stick = controller_state.r_stick_state
+
+    user_input = asyncio.ensure_future(
+        ainput(prompt=' Press <enter> to stop.')
+    )
+    while not user_input.done():
+        # ENTER_BATTLE
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(2)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(7)
+        # SET_ADJUNCT
+        await l_stick.set_right(0.1)
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'plus')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'zr')
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'down')
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'r')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'r')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(1)
+        await button_push(controller_state, 'r')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'r')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'zr')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'down')
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(0.25)
+        # MOVE_TO_GATE
+        await button_push(controller_state, 'x')
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'up')
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(1)
+        await l_stick.set_up(5)
+        await r_stick.set_left(0.1)
+        await l_stick.set_up(2)
+        # SPAM_RX_RY
+        for i in range(1,330):
+            await button_push(controller_state, 'r','x')
+            await button_push(controller_state, 'r','y')
+            await asyncio.sleep(0.25)
+        # COMFIRM_BATTLE_RESULT    
+        for i in range(1,30):
+            await button_push(controller_state, 'plus')
+            await asyncio.sleep(0.25)
+        # NAVIGATE_BACK_TO_BATTLE
+        await button_push(controller_state, 'r')
+        await asyncio.sleep(1)
+        await button_push(controller_state, 'up')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'up')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(3)
+        await button_push(controller_state, 'down')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'down')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'down')
+        await asyncio.sleep(0.5)
+        await button_push(controller_state, 'down')
+        await asyncio.sleep(1)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(3)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(10)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(4)
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(4)
+        await button_push(controller_state, 'b')
+        await asyncio.sleep(3)
+        await button_push(controller_state, 'up')
+        await asyncio.sleep(0.25)
+        await button_push(controller_state, 'up')
+        await asyncio.sleep(5)
+   
+    
+
+    # push all buttons consecutively until user input
+    # while not user_input.done():
+    #     for button in button_list:
+    #         await button_push(controller_state, button)
+    #         await asyncio.sleep(0.1)
+
+    #         if user_input.done():
+    #             break
+
+    # await future to trigger exceptions in case something went wrong
+    # await user_input
+
+
 
 def ensure_valid_button(controller_state, *buttons):
     """
@@ -179,6 +292,11 @@ def _register_commands_with_controller_state(controller_state, cli):
         await test_controller_buttons(controller_state)
 
     cli.add_command(test_buttons.__name__, test_buttons)
+
+    async def gold():
+        await macro(controller_state)
+    
+    cli.add_command(gold.__name__, gold)
 
     # Mash a button command
     async def mash(*args):
